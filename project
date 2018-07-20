@@ -1,0 +1,50 @@
+# -*- coding: utf-8 -*-
+"""
+
+@author: Chen Siming
+"""
+
+"""
+未解决问题：
+\n\:等转义字符
+有部分.htm结果的链接
+"""
+import re
+from baidu_translate import *
+f = open("LocaleResource_en_US.properties","r")
+f1 = open("test.properties",'w') 
+is_trans="([^=]*)(= *)(.*)"
+is_set="[^<]*<[^>]*>[^<]*<[^>]*>[^<]*"
+is_split="([^<]*)(<[^>]*>)([^<]*)(<[^>]*>)([^<]*)"
+        get_trans=re.match(is_trans,line)
+        untrans1=get_trans.group(1)
+        untrans2=get_trans.group(2)
+        f1.write(untrans1)
+        f1.write(untrans2)
+        raw_line=get_trans.group(3)
+        split_list=re.findall(is_set,raw_line)
+        if split_list!=[]:
+            for index,item in enumerate(split_list):
+                split_line=item
+                trans_set=re.match(is_split,split_line)
+                raw1=trans_set.group(1)
+                raw3=trans_set.group(3)
+                raw5=trans_set.group(5)
+                #1,3,5送去机翻
+                trans1=baidu_translate(raw1)
+                trans3=baidu_translate(raw3)
+                trans5=baidu_translate(raw5)
+                trans_line=trans1+trans_set.group(2)+trans3+trans_set.group(4)+trans5
+                f1.write(trans_line)
+            f1.write('\n')
+        else:
+            #整句机翻
+            trans0=baidu_translate(raw_line)+'\n'
+            f1.write(trans0)
+            
+            
+        
+        
+        
+f.close()
+f1.close()
